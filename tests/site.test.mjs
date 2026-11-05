@@ -151,6 +151,20 @@ test("weather network and malformed-data errors are visible", async (t) => {
         ...validResponse,
         current: { ...validResponse.current, temperature_2m: null }
       })
+    }), "Weather service returned an invalid measurement."],
+    ["invalid weather code", async () => ({
+      ok: true,
+      json: async () => ({
+        ...validResponse,
+        current: { ...validResponse.current, weather_code: 123 }
+      })
+    }), "Weather service returned an invalid measurement."],
+    ["out-of-range humidity", async () => ({
+      ok: true,
+      json: async () => ({
+        ...validResponse,
+        current: { ...validResponse.current, relative_humidity_2m: 180 }
+      })
     }), "Weather service returned an invalid measurement."]
   ];
 

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="FA Aquavolt Hydropure LLC, owned by Fabian Athayde in Del Rio, Texas, focused on magnetic water turbines.">
+    <meta name="description" content="FA Aquavolt Hydropure LLC is based in Del Rio, Texas, and focuses on magnetic water turbines.">
     <meta name="theme-color" content="#142a2a">
     <title>FA Aquavolt Hydropure LLC | Del Rio, Texas</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,6 +33,10 @@
       }
 
       a { color: inherit; }
+      a:focus-visible, button:focus-visible {
+        outline: 3px solid var(--coral);
+        outline-offset: 3px;
+      }
 
       .skip-link {
         position: absolute;
@@ -102,7 +106,6 @@
 
       .hero-copy {
         padding: 22px 0;
-        animation: arrive 700ms ease-out both;
       }
 
       .hero-image { min-width: 0; margin: 0; }
@@ -184,7 +187,6 @@
         width: min(100% - 64px, 1320px);
         margin: 0 auto;
         padding: 84px 0 88px;
-        animation: arrive 800ms 120ms ease-out both;
       }
 
       .section-label {
@@ -321,11 +323,6 @@
 
       footer p { margin: 0; }
 
-      @keyframes arrive {
-        from { opacity: 0; transform: translateY(16px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-
       @media (max-width: 720px) {
         .hero {
           min-height: 0;
@@ -371,7 +368,7 @@
         <div class="hero-copy">
           <p class="eyebrow">Magnetic water turbines · Del Rio, Texas</p>
           <h1>FA Aquavolt<br>Hydropure LLC</h1>
-          <p class="hero-description">Magnetic water turbines from a company owned by Fabian Athayde and based in Del Rio, Texas.</p>
+          <p class="hero-description">Magnetic water turbines from a company based in Del Rio, Texas.</p>
           <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Del+Rio%2C+Texas" target="_blank" rel="noopener noreferrer">
             Find Del Rio <span class="arrow" aria-hidden="true">↗</span>
           </a>
@@ -387,10 +384,10 @@
         <div>
           <p class="section-label">Company details</p>
           <h2 id="about-title">Magnetic water turbines, based in Del Rio.</h2>
-          <p class="details-copy">FA Aquavolt Hydropure LLC is owned by Fabian Athayde and based in Del Rio, Texas. The company focuses on magnetic water turbines.</p>
+          <p class="details-copy">FA Aquavolt Hydropure LLC is based in Del Rio, Texas. The company focuses on magnetic water turbines.</p>
         </div>
         <aside class="owner-block" aria-label="Ownership and location">
-          <p><span class="detail-label">Owner</span><span class="detail-value">Fabian Athayde</span></p>
+          <p><span class="detail-label">Owner</span><span class="detail-value">Private</span></p>
           <p><span class="detail-label">Location</span><span class="detail-value">Del Rio, Texas</span></p>
         </aside>
       </section>
@@ -442,8 +439,11 @@
           [95, "Thunderstorm"], [96, "Thunderstorm with slight hail"], [99, "Thunderstorm with heavy hail"]
         ]);
 
-        function displayNumber(value, unit) {
+        function displayNumber(value, unit, range) {
           if (typeof value !== "number" || !Number.isFinite(value)) {
+            throw new Error("Weather service returned an invalid measurement.");
+          }
+          if (range && (value < range[0] || value > range[1])) {
             throw new Error("Weather service returned an invalid measurement.");
           }
           return `${Math.round(value)}${unit}`;
@@ -455,7 +455,13 @@
           condition.classList.remove("weather-error");
 
           try {
+            if (typeof fetch !== "function") {
+              throw new Error("Weather service is unavailable.");
+            }
             const response = await fetch(apiUrl, { cache: "no-store" });
+            if (!response || typeof response.ok !== "boolean") {
+              throw new Error("Weather service is unavailable.");
+            }
             if (!response.ok) {
               throw new Error(`Weather service returned HTTP ${response.status}.`);
             }
@@ -465,14 +471,19 @@
               throw new Error("Weather service response did not include current conditions.");
             }
 
+            const hasValidWeatherCode = typeof current.weather_code === "number" && Number.isFinite(current.weather_code) && Number.isInteger(current.weather_code);
+            if (!hasValidWeatherCode || !conditions.has(current.weather_code)) {
+              throw new Error("Weather service returned an invalid measurement.");
+            }
+
             const measurements = {
               temperature: displayNumber(current.temperature_2m, "°F"),
               feelsLike: displayNumber(current.apparent_temperature, "°F"),
-              humidity: displayNumber(current.relative_humidity_2m, "%"),
-              wind: displayNumber(current.wind_speed_10m, " mph")
+              humidity: displayNumber(current.relative_humidity_2m, "%", [0, 100]),
+              wind: displayNumber(current.wind_speed_10m, " mph", [0, Number.POSITIVE_INFINITY])
             };
             const weatherDescription = conditions.get(current.weather_code) ?? "Conditions unavailable";
-            if (typeof current.time !== "string" || typeof data.utc_offset_seconds !== "number") {
+            if (typeof current.time !== "string" || typeof data.utc_offset_seconds !== "number" || !Number.isFinite(data.utc_offset_seconds)) {
               throw new Error("Weather service response did not include a valid observation time.");
             }
             const offset = data.utc_offset_seconds;

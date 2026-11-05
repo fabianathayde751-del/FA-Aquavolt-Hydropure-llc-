@@ -88,5 +88,14 @@ test("text and focus colors meet WCAG AA contrast thresholds", () => {
   }
 
   assert.ok(contrastRatio(coral, white) >= 3, "weather button focus outline is visible on white");
+  assert.ok(contrastRatio(coral, paper) >= 3, "link focus outline is visible on the page background");
+  assert.ok(contrastRatio(coral, ink) >= 3, "link focus outline is visible on the hero background");
   assert.ok(contrastRatio(white, ink) >= 3, "hero link focus outline is visible on the hero");
+});
+
+test("links and buttons share a visible keyboard focus style", () => {
+  assert.match(
+    style,
+    /a:focus-visible,\s*button:focus-visible\s*\{\s*outline:\s*3px solid var\(--coral\);/
+  );
 });
