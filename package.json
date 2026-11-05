@@ -1,0 +1,16 @@
+{
+  "name": "fa-aquavolt-hydropure-site",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test tests/site.test.mjs tests/accessibility.test.mjs",
+    "test:live": "node --test tests/site.test.mjs tests/accessibility.test.mjs tests/live.test.mjs"
+  },
+  "devDependencies": {
+    "axe-core": "^4.14.0",
+    "jsdom": "^26.1.0"
+  }
+}

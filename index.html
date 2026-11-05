@@ -14,7 +14,7 @@
         color-scheme: light;
         --ink: #142a2a;
         --paper: #f5f7f3;
-        --green: #17836d;
+        --green: #126f5c;
         --aqua: #65c6bd;
         --coral: #d7654c;
         --line: #cdd7d1;
@@ -237,6 +237,78 @@
         font-weight: 600;
       }
 
+      .weather-section {
+        width: min(100% - 64px, 1320px);
+        margin: 0 auto;
+        padding: 0 0 80px;
+      }
+
+      .weather-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 24px;
+        align-items: center;
+        padding: 28px;
+        border: 1px solid var(--line);
+        background: white;
+      }
+
+      .weather-heading {
+        margin: 0 0 8px;
+        font-family: "DM Serif Display", Georgia, serif;
+        font-size: 30px;
+        font-weight: 400;
+      }
+
+      .weather-summary {
+        margin: 0;
+        color: #435553;
+        font-size: 14px;
+      }
+
+      .weather-metrics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 28px;
+        margin: 24px 0 0;
+      }
+
+      .weather-metrics div { min-width: 90px; }
+      .weather-metrics dt { margin-bottom: 5px; }
+      .weather-metrics dd { margin: 0; font-size: 17px; font-weight: 600; }
+
+      .weather-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 12px;
+      }
+
+      .weather-refresh {
+        min-height: 44px;
+        padding: 0 16px;
+        border: 0;
+        color: white;
+        background: var(--green);
+        font: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .weather-refresh:hover { background: var(--ink); }
+      .weather-refresh:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+      .weather-refresh:disabled { cursor: wait; opacity: 0.7; }
+
+      .weather-updated {
+        margin: 0;
+        color: #52635f;
+        font-size: 12px;
+        text-align: right;
+      }
+
+      .weather-error { color: #a13e2d; }
+
       footer {
         display: flex;
         justify-content: space-between;
@@ -270,6 +342,11 @@
         .details { grid-template-columns: 1fr; gap: 34px; padding: 56px 0; }
         h2 { font-size: 36px; }
         .owner-block { padding-left: 18px; }
+        .weather-section { width: min(100% - 40px, 1320px); padding-bottom: 56px; }
+        .weather-card { grid-template-columns: 1fr; padding: 22px; }
+        .weather-actions { align-items: flex-start; }
+        .weather-updated { text-align: left; }
+        .weather-metrics { gap: 20px; }
         footer { flex-direction: column; padding: 20px; }
       }
 
@@ -291,21 +368,21 @@
         <span class="topbar-location"><span class="location-dot" aria-hidden="true"></span>Del Rio, Texas</span>
       </nav>
       <div class="hero-inner">
-        <div class="hero-copy" id="main">
+        <div class="hero-copy">
           <p class="eyebrow">Magnetic water turbines · Del Rio, Texas</p>
           <h1>FA Aquavolt<br>Hydropure LLC</h1>
           <p class="hero-description">Magnetic water turbines from a company owned by Fabian Athayde and based in Del Rio, Texas.</p>
-          <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Del+Rio%2C+Texas" target="_blank" rel="noreferrer">
+          <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Del+Rio%2C+Texas" target="_blank" rel="noopener noreferrer">
             Find Del Rio <span class="arrow" aria-hidden="true">↗</span>
           </a>
         </div>
         <figure class="hero-image">
           <img src="water-turbine-cc-by-sa-2.jpg" width="640" height="427" alt="Water turbine machinery at Calderdale Industrial Museum; an illustrative reference, not a company product.">
-          <figcaption>Illustrative turbine, not a company product. <a href="https://commons.wikimedia.org/wiki/File:Calderdale_Industrial_Museum_-_water_turbine_-_geograph.org.uk_-_6687619.jpg" target="_blank" rel="noreferrer">Photo by Chris Allen via Wikimedia Commons</a>, licensed under <a href="https://creativecommons.org/licenses/by-sa/2.0/" target="_blank" rel="noreferrer">CC BY-SA 2.0</a>.</figcaption>
+          <figcaption>Illustrative turbine, not a company product. <a href="https://commons.wikimedia.org/wiki/File:Calderdale_Industrial_Museum_-_water_turbine_-_geograph.org.uk_-_6687619.jpg" target="_blank" rel="noopener noreferrer">Photo by Chris Allen via Wikimedia Commons</a>, licensed under <a href="https://creativecommons.org/licenses/by-sa/2.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 2.0</a>.</figcaption>
         </figure>
       </div>
     </header>
-    <main>
+    <main id="main" tabindex="-1">
       <section class="details" aria-labelledby="about-title">
         <div>
           <p class="section-label">Company details</p>
@@ -317,10 +394,123 @@
           <p><span class="detail-label">Location</span><span class="detail-value">Del Rio, Texas</span></p>
         </aside>
       </section>
+      <section class="weather-section" aria-labelledby="weather-title">
+        <p class="section-label">Live local weather</p>
+        <div class="weather-card">
+          <div>
+            <h2 class="weather-heading" id="weather-title">Del Rio, Texas</h2>
+            <p class="weather-summary" id="weather-condition" aria-live="polite">Loading current weather…</p>
+            <dl class="weather-metrics">
+              <div><dt class="detail-label">Temperature</dt><dd id="weather-temperature">—</dd></div>
+              <div><dt class="detail-label">Feels like</dt><dd id="weather-feels-like">—</dd></div>
+              <div><dt class="detail-label">Humidity</dt><dd id="weather-humidity">—</dd></div>
+              <div><dt class="detail-label">Wind</dt><dd id="weather-wind">—</dd></div>
+            </dl>
+          </div>
+          <div class="weather-actions">
+            <button class="weather-refresh" id="weather-refresh" type="button">Refresh weather</button>
+            <p class="weather-updated" id="weather-updated">Automatic refresh every 15 minutes</p>
+            <p class="weather-updated">Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a></p>
+          </div>
+        </div>
+      </section>
     </main>
     <footer>
       <p>FA Aquavolt Hydropure LLC</p>
       <p>Del Rio, Texas</p>
     </footer>
+    <script>
+      (() => {
+        const apiUrl = "https://api.open-meteo.com/v1/forecast?latitude=29.3709&longitude=-100.8959&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FChicago";
+        const refreshButton = document.getElementById("weather-refresh");
+        const condition = document.getElementById("weather-condition");
+        const updated = document.getElementById("weather-updated");
+        const fields = {
+          temperature: document.getElementById("weather-temperature"),
+          feelsLike: document.getElementById("weather-feels-like"),
+          humidity: document.getElementById("weather-humidity"),
+          wind: document.getElementById("weather-wind")
+        };
+        const conditions = new Map([
+          [0, "Clear sky"], [1, "Mainly clear"], [2, "Partly cloudy"], [3, "Overcast"],
+          [45, "Fog"], [48, "Rime fog"], [51, "Light drizzle"], [53, "Moderate drizzle"],
+          [55, "Dense drizzle"], [56, "Light freezing drizzle"], [57, "Dense freezing drizzle"],
+          [61, "Slight rain"], [63, "Moderate rain"], [65, "Heavy rain"], [66, "Light freezing rain"],
+          [67, "Heavy freezing rain"], [71, "Slight snow"], [73, "Moderate snow"], [75, "Heavy snow"],
+          [77, "Snow grains"], [80, "Slight rain showers"], [81, "Moderate rain showers"],
+          [82, "Violent rain showers"], [85, "Slight snow showers"], [86, "Heavy snow showers"],
+          [95, "Thunderstorm"], [96, "Thunderstorm with slight hail"], [99, "Thunderstorm with heavy hail"]
+        ]);
+
+        function displayNumber(value, unit) {
+          if (typeof value !== "number" || !Number.isFinite(value)) {
+            throw new Error("Weather service returned an invalid measurement.");
+          }
+          return `${Math.round(value)}${unit}`;
+        }
+
+        async function loadWeather() {
+          refreshButton.disabled = true;
+          condition.textContent = "Loading current weather…";
+          condition.classList.remove("weather-error");
+
+          try {
+            const response = await fetch(apiUrl, { cache: "no-store" });
+            if (!response.ok) {
+              throw new Error(`Weather service returned HTTP ${response.status}.`);
+            }
+            const data = await response.json();
+            const current = data.current;
+            if (!current || typeof current !== "object") {
+              throw new Error("Weather service response did not include current conditions.");
+            }
+
+            const measurements = {
+              temperature: displayNumber(current.temperature_2m, "°F"),
+              feelsLike: displayNumber(current.apparent_temperature, "°F"),
+              humidity: displayNumber(current.relative_humidity_2m, "%"),
+              wind: displayNumber(current.wind_speed_10m, " mph")
+            };
+            const weatherDescription = conditions.get(current.weather_code) ?? "Conditions unavailable";
+            if (typeof current.time !== "string" || typeof data.utc_offset_seconds !== "number") {
+              throw new Error("Weather service response did not include a valid observation time.");
+            }
+            const offset = data.utc_offset_seconds;
+            const sign = offset >= 0 ? "+" : "-";
+            const absoluteOffset = Math.abs(offset);
+            const hours = String(Math.floor(absoluteOffset / 3600)).padStart(2, "0");
+            const minutes = String(Math.floor((absoluteOffset % 3600) / 60)).padStart(2, "0");
+            const observedAt = new Date(`${current.time}:00${sign}${hours}:${minutes}`);
+            if (Number.isNaN(observedAt.getTime())) {
+              throw new Error("Weather service returned an invalid observation time.");
+            }
+
+            Object.entries(measurements).forEach(([key, value]) => {
+              fields[key].textContent = value;
+            });
+            condition.textContent = weatherDescription;
+            updated.textContent = `Observed ${new Intl.DateTimeFormat("en-US", {
+              hour: "numeric",
+              minute: "2-digit",
+              timeZone: "America/Chicago",
+              timeZoneName: "short"
+            }).format(observedAt)} · Auto-refreshes every 15 minutes`;
+          } catch (error) {
+            condition.textContent = "Live weather is temporarily unavailable. Please try again.";
+            condition.classList.add("weather-error");
+            Object.values(fields).forEach((field) => {
+              field.textContent = "—";
+            });
+            updated.textContent = error instanceof Error ? error.message : "Unable to load current weather.";
+          } finally {
+            refreshButton.disabled = false;
+          }
+        }
+
+        refreshButton.addEventListener("click", loadWeather);
+        loadWeather();
+        window.setInterval(loadWeather, 15 * 60 * 1000);
+      })();
+    </script>
   </body>
 </html>

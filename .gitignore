@@ -1,6 +1,7 @@
 .env
 .env.*
 !.env.example
+node_modules/
 *.key
 *.pem
 *.p12
