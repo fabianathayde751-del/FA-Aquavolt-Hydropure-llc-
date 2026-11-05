@@ -9,3 +9,7 @@ The website displays current weather for Del Rio using the Open-Meteo API. It lo
 ## Testing
 
 Requires Node.js 18 or newer. Run `npm test` for local frontend, axe WCAG 2.1 A/AA, and color-contrast checks. Run `npm run test:live` to run those checks plus a live request to the Open-Meteo API; the live check requires internet access. axe runs in jsdom, so rendered color contrast is verified separately by the contrast test.
+
+## Developer documentation
+
+See [Git workflow reference](GIT_WORKFLOW.md) for examples and safety notes covering `git stash`, `git cherry-pick`, `git revert`, and `git reset`.
